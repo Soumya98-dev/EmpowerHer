@@ -14,10 +14,10 @@ struct ContentView: View {
                         .buttonStyle()
                 }
                 
-//                NavigationLink(destination: AwarenessView()) {
-//                    Text("Women's Rights Awareness")
-//                        .buttonStyle()
-//                }
+                NavigationLink(destination: AwarenessView()) {
+                    Text("Women's Rights Awareness")
+                        .buttonStyle()
+                }
 //                
 //                NavigationLink(destination: QuizView()) {
 //                    Text("Take a Quiz")
