@@ -18,11 +18,11 @@ struct ContentView: View {
                     Text("Women's Rights Awareness")
                         .buttonStyle()
                 }
-//                
-//                NavigationLink(destination: QuizView()) {
-//                    Text("Take a Quiz")
-//                        .buttonStyle()
-//                }
+                
+                NavigationLink(destination: QuizView()) {
+                    Text("Take a Quiz")
+                        .buttonStyle()
+                }
             }
             .padding()
         }

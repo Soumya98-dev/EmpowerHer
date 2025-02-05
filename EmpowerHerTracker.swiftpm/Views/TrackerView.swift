@@ -11,6 +11,7 @@ struct TrackerView: View {
     @State private var startDate = Date()
     @State private var endDate = Date()
     @State private var cycleLength = 28
+    @State private var nextPeriodDate: String = "Not Predicted Yet"
     
     var body: some View {
         VStack {
