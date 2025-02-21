@@ -41,9 +41,11 @@ struct TrackerView: View {
                 Button(action: logPeriod) {
                     Text("Save Period Logs")
                         .frame(width: 200, height: 50)
-                        .background(Color.pink)
+                        .background(LinearGradient(gradient: Gradient(colors: [Color.pink, Color.red]), startPoint: .leading, endPoint: .trailing))
                         .foregroundColor(.white)
-                        .cornerRadius(10)
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+                        .font(.headline)
                         .padding()
                 }
                 
@@ -57,24 +59,35 @@ struct TrackerView: View {
                     .font(.title2)
                     .padding(.top)
                 
-                List(periodLogs) { log in
-                    VStack(alignment: .leading) {
-                        Text("Start: \(log.start)")
-                        Text("End: \(log.end)")
-                        Text("Recorded On: \(log.recorded)")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                        Text("Predicted Next Period: \(log.predictedNextPeriod)")
-                            .font(.caption)
-                            .foregroundColor(.blue)
+                ForEach(periodLogs) { log in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Start: \(log.start)")
+                                .font(.headline)
+                            Text("End: \(log.end)")
+                            Text("Recorded On: \(log.recorded)")
+                                .font(.caption)
+                                .foregroundColor(.gray)
+                            Text("Predicted Next Period: \(log.predictedNextPeriod)")
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                        }
+                        Spacer()
+                        Button(action: {deleteLog(log) }) {
+                            Image(systemName: "trash")
+                                .foregroundColor(.red)
+                                .padding()
+                                .background(Circle().fill(Color.white).shadow(radius: 2))
+                        }
                     }
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.white).shadow(radius: 3))
+                    .padding(.horizontal)
                 }
-                .onAppear(perform: loadLogs)
-                .frame(height: 300)
-                .scrollContentBackground(.hidden)
             }
             .padding()
         }
+        .onAppear(perform: loadLogs)
     }
     
     func logPeriod() {
@@ -100,8 +113,17 @@ struct TrackerView: View {
             UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
         }
         
-        periodLogs = savedLogs
-//        predictNextPeriod()
+        withAnimation {
+            periodLogs = savedLogs
+        }
+    }
+    
+    func deleteLog(_ log: PeriodLog) {
+        periodLogs.removeAll {$0.id == log.id}
+        
+        if let encoded = try? JSONEncoder().encode(periodLogs) {
+            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
+        }
     }
     
     func loadLogs() {
