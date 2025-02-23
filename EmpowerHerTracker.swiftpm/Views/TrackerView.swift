@@ -22,6 +22,8 @@ struct TrackerView: View {
     @State private var cycleLength = 28
     @State private var nextPeriodDate: String = "Not Predicted Yet"
     @State private var periodLogs: [PeriodLog] = []
+    @State private var showDeleteAlert = false
+    @State private var logToDelete: PeriodLog?
     
     let userDefaultsKey = "PeriodLogs"
     
@@ -63,29 +65,45 @@ struct TrackerView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Text("Start: \(log.start)")
-                                .font(.headline)
                             Text("End: \(log.end)")
                             Text("Recorded On: \(log.recorded)")
                                 .font(.caption)
                                 .foregroundColor(.gray)
                             Text("Predicted Next Period: \(log.predictedNextPeriod)")
-                                .font(.caption)
+                                .font(.headline)
                                 .foregroundColor(.blue)
                         }
                         Spacer()
                         Button(action: {deleteLog(log) }) {
                             Image(systemName: "trash")
                                 .foregroundColor(.red)
-                                .padding()
+                                .padding(8)
                                 .background(Circle().fill(Color.white).shadow(radius: 2))
+                                .frame(width: 40, height:40)
                         }
                     }
                     .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.white).shadow(radius: 3))
+                    .background(RoundedRectangle(cornerRadius: 5).fill(Color(UIColor.systemGray6)))
+                    .shadow(radius: 3)
                     .padding(.horizontal)
+                    
+                    Divider().padding(.horizontal, 16)
                 }
             }
             .padding()
+            .alert("Are you sure?", isPresented: $showDeleteAlert) {
+                Button("Cancel", role:.cancel) {logToDelete = nil}
+                Button("Delete", role: .destructive) {
+                    if let log = logToDelete {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            periodLogs.removeAll {$0.id == log.id}
+                        }
+                        if let encoded = try? JSONEncoder().encode(periodLogs) {
+                            UserDefaults.standard.set(encoded, forKey:userDefaultsKey)
+                        }
+                    }
+                }
+            }
         }
         .onAppear(perform: loadLogs)
     }
@@ -119,11 +137,8 @@ struct TrackerView: View {
     }
     
     func deleteLog(_ log: PeriodLog) {
-        periodLogs.removeAll {$0.id == log.id}
-        
-        if let encoded = try? JSONEncoder().encode(periodLogs) {
-            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
-        }
+        logToDelete = log
+        showDeleteAlert = true
     }
     
     func loadLogs() {
