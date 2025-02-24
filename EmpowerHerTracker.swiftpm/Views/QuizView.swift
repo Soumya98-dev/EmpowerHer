@@ -64,10 +64,17 @@ struct QuizView: View {
                 }
                 
                 Text("Score: \(score)")
-                    .font(.headline)
-                    .padding()
+                    .font(.largeTitle)
+                    .bold()
                     .foregroundColor(score > quizQuestions.count / 2 ? .green : .red)
-                    .overlay(Text(score > quizQuestions.count / 2 ? "Great job!" : "Keep going!").font(.caption).padding(.top, 30))
+                    .padding()
+                    .overlay(
+                        Text(score > quizQuestions.count / 2 ? "Great job! 🎉" : "")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.top, 30)
+                    )
+
             }
         }
         .onAppear{

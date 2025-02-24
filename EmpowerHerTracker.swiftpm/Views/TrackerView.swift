@@ -111,30 +111,28 @@ struct TrackerView: View {
     func logPeriod() {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
-        
-        let nextStart = Calendar.current.date(byAdding: .day, value: cycleLength, to: startDate) ?? Date()
-        let predictedNextPeriod = formatter.string(from: nextStart)
-        nextPeriodDate = predictedNextPeriod
-        
+
         let newLog = PeriodLog(
             id: UUID(),
             start: formatter.string(from: startDate),
             end: formatter.string(from: endDate),
             recorded: formatter.string(from: Date()),
-            predictedNextPeriod: predictedNextPeriod
+            predictedNextPeriod: formatter.string(from: Calendar.current.date(byAdding: .day, value: cycleLength, to: startDate) ?? Date())
         )
-        
+
         var savedLogs = loadSavedLogs()
-        savedLogs.append(newLog)
-        
-        if let encoded = try? JSONEncoder().encode(savedLogs) {
-            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
-        }
-        
-        withAnimation {
-            periodLogs = savedLogs
+
+        if !savedLogs.contains(where: { $0.start == newLog.start && $0.end == newLog.end }) {
+            savedLogs.append(newLog)
+            if let encoded = try? JSONEncoder().encode(savedLogs) {
+                UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
+            }
+            withAnimation {
+                periodLogs = savedLogs
+            }
         }
     }
+
     
     func deleteLog(_ log: PeriodLog) {
         logToDelete = log

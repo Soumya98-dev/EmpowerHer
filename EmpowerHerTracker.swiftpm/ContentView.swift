@@ -14,11 +14,14 @@ struct ContentView: View {
         "The UN declared March 8 as International Women's Day in 1977",
         "Simone Biles holds the record for the most gymnastics World Championships medals ever won"
     ]
-
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [Color.white, Color.pink.opacity(0.2)]), startPoint: .top, endPoint: .bottom)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack(spacing: 20) {
                     Image("logo")
                         .resizable()
                         .scaledToFit()
@@ -26,31 +29,30 @@ struct ContentView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .shadow(radius: 5)
 
-                Text("EmpowerHer Tracker")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding()
-                
-                NavigationLink(destination: TrackerView()) {
-                    Text("Period Tracker")
-                        .buttonStyle()
+                    Text("EmpowerHer Tracker")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding()
+
+                    NavigationLink(destination: TrackerView()) {
+                        Text("Period Tracker")
+                            .buttonStyle()
+                    }
+
+                    NavigationLink(destination: AwarenessView(facts: facts)) {
+                        Text("Women's Rights Awareness")
+                            .buttonStyle()
+                    }
+
+                    NavigationLink(destination: QuizView(quizQuestions: generateQuizFromFacts(facts: facts))) {
+                        Text("Take a Quiz")
+                            .buttonStyle()
+                    }
                 }
-                
-                NavigationLink(destination: AwarenessView(facts: facts)) {
-                    Text("Women's Rights Awareness")
-                        .buttonStyle()
-                }
-                
-                NavigationLink(destination: QuizView(quizQuestions: generateQuizFromFacts(facts: facts))) {
-                    Text("Take a Quiz")
-                        .buttonStyle()
-                }
+                .padding()
             }
-            .padding()
         }
     }
-    
-
 }
 
 extension View {
